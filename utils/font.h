@@ -193,7 +193,11 @@ public:
             pos[i].x += x;
             pos[i].y += y;
             SDL_RenderCopy(renderer, font, &rects[i] ,&pos[i]);
+        // reset pos forrender many times
+            pos[i].x -= x;
+            pos[i].y -= y;
         }
+        
 
     }
 };

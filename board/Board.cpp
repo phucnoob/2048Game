@@ -1,5 +1,8 @@
 #include<iostream>
 #include<vector>
+#include<functional>
+
+typedef void (*callback_function)(string);
 
 #include"BoardData.h"
 #include"BoardUI.h"
@@ -29,33 +32,43 @@ class Board {
     }
 
     bool move(DIRECTION direction) {
+        bool success = true;
         switch (direction)
         {
             case UP:
-                data->moveUp();
+                success = data->moveUp();
                 data->addRandom();
                 break;
             case DOWN:
-                data->moveDown();
+                success = data->moveDown();
                 data->addRandom();
                 break;
             case LEFT:
-                data->moveLeft();
+                success = data->moveLeft();
                 data->addRandom();
                 break;
             case RIGHT:
-                data->moveRight();
+                success = data->moveRight();
                 data->addRandom();
                 break;        
             default:
                 break;
         }
-        return true;
+        
+        return success;
     }
 
     void render(SDL_Renderer *renderer) {
         ui->updateBoardUI(data->getData());
         ui->render(renderer);
+    }
+
+    bool isGameEnded() {
+        return data->isGameEnded();
+    }
+
+    size_t getScore() {
+        return data->getScore();
     }
 
     ~Board() {

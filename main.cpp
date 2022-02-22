@@ -6,7 +6,12 @@ using namespace std;
 #include<SDL2/SDL_image.h>
 
 #include"Game.cpp"
-
+/**
+ * TODO
+ * - new game screen
+ * - undo
+ * - gameover screen
+ * */
 int main() {
     Game *game = new Game();
 
@@ -15,7 +20,8 @@ int main() {
     while(game->isRun) {
         game->listen();
         game->render();
+        game->handleGameOver();
     }
-    
+
     return 0;
 }

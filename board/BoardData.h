@@ -1,6 +1,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include<iostream>
 
 using namespace std;
 
@@ -8,8 +9,9 @@ class BoardData
 {
 private:
     vector<vector<int>> data;
+    size_t score = 0;
 public:
-
+    bool isGameOver = false;
     BoardData(int SIZE) {
         data = initBoard(SIZE);
     }
@@ -18,6 +20,9 @@ public:
         return data;
     }
 
+    size_t getScore() {
+        return score;
+    }
     // random in [a,b)
     int randRange(int a, int b)
     {
@@ -96,7 +101,7 @@ public:
     bool shiftArray(vector<int> &arr)
     {
         // 0 4 0 0
-        bool success = true;
+        bool success = false;
         int index = 0, stop = 0;
         for (size_t i = 0; i < arr.size(); i++)
         {
@@ -106,6 +111,7 @@ public:
                 // Move or merge
                 if (index != i)
                 {
+                    success = true;
                     // Merge
                     if (arr[index] == arr[i])
                     {
@@ -113,6 +119,9 @@ public:
                         arr[i] = 0;
                         // avoid double merge
                         stop = index + 1;
+                        //score
+                        score += arr[index];
+                        // cout << score;
                     }
                     else
                     {
@@ -124,7 +133,7 @@ public:
             }
         }
 
-        return false;
+        return success;
     }
 
     bool moveLeft()
@@ -197,6 +206,9 @@ public:
             }
         }
 
+        if(len == 0) {
+            return;
+        }
         int pos = randRange(0, len);
         data[emptyCroods[pos][0]][emptyCroods[pos][1]] = randRange(1, 3) * 2;
     }
@@ -240,7 +252,7 @@ public:
         return false;
     }
 
-    bool gameEnded()
+    bool isGameEnded()
     {
         bool notEnd = false;
         if (countEmpty() > 0)
