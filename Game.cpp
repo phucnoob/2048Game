@@ -29,7 +29,7 @@ class Game
 public:
     bool isRun = true;
     bool isGameOver = false;
-    GameState state = END;
+    GameState state = MENU;
     long frame = 0;
     int size = 3;
     size_t score = 0;

@@ -264,9 +264,8 @@ public:
         rotateBoard();
         notEnd |= canMoveLeft();
         rotateBoard();
-        notEnd |= canMoveLeft();
+  
         rotateBoard();
-        notEnd |= canMoveLeft();
         rotateBoard();
 
         // rotate 4 time and check left, right, up, down

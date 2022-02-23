@@ -67,7 +67,11 @@ class Tile
                 count++;
                 _v /= 2;
             }
-            this->color = Colors[count];
+            if(count <= 11) {
+                this->color = Colors[count];
+            } else {
+                this->color = {10, 61, 98, 255};
+            }
             return count;
         }
 
@@ -97,6 +101,7 @@ class Tile
 
             //reset color
             SDL_SetTextureColorMod(font, 255, 255, 255);
+            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
         }
 };
 
@@ -109,9 +114,9 @@ SDL_Color color5 = {247, 124, 95, 255};
 SDL_Color color6 = {247, 95, 59, 255};
 SDL_Color color7 = {238, 228, 100, 255};
 SDL_Color color8 = {237, 204, 98, 255};
-SDL_Color color9 = {0, 0, 0, 255};
-
-
+SDL_Color color9 = {250, 152, 58, 255};
+SDL_Color color10 = {229, 80, 57, 255};
+SDL_Color color11 = {74, 105, 189, 255};
 static SDL_Color colors[] = {
     color0,
     color1,
@@ -121,7 +126,10 @@ static SDL_Color colors[] = {
     color5,
     color6,
     color7,
-    color8
+    color8,
+    color9,
+    color10,
+    color11
 };
 
 SDL_Color* Tile::Colors = colors;
