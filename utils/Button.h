@@ -60,7 +60,7 @@ class Button {
         }
 
         bool listen(SDL_Event *event) {
-            if ((*event).type ==  SDL_MOUSEBUTTONUP) {
+            if ((*event).type ==  SDL_MOUSEBUTTONDOWN) {
                 int x = (*event).button.x;
                 int y = (*event).button.y;
 

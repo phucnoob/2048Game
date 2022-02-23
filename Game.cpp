@@ -1,33 +1,36 @@
-#include<vector>
-#include<string>
-#include<SDL2/SDL.h>
-#include<SDL2/SDL_image.h>
+#include <vector>
+#include <string>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 using namespace std;
 
-#include"utils/SDL_Utils.h"
-#include"utils/font.h"
-#include"utils/Button.h"
-#include"utils/MenuButton.h"
-#include"board/Board.cpp"
+#include "utils/SDL_Utils.h"
+#include "utils/font.h"
+#include "utils/Button.h"
+#include "utils/MenuButton.h"
+#include "board/Board.cpp"
 
-enum GameState {
+enum GameState
+{
     MENU,
     RUN,
     END
 };
 
-enum GameType {
+enum GameType
+{
     EASY = 4,
     MEDIUM = 5,
     HARD = 6
 };
 
-class Game {
-    public:
+class Game
+{
+public:
     bool isRun = true;
     bool isGameOver = false;
     GameState state = MENU;
-    long frame = 60;
+    long frame = 0;
     int size = 3;
     size_t score = 0;
     const int WIDTH = 540;
@@ -53,57 +56,70 @@ class Game {
     Button *newGameBtn = nullptr;
 
     // Menu screen
-    vector<MenuButton*> gameTypes = {
-        new MenuButton("3x3", 0,0, 3 ,64, 16),
-        new MenuButton("4x4", 0,0, 4 ,64, 16),
-        new MenuButton("5x5", 0,0, 5 ,64, 16)
-    };
+    BitmapText *welcome = nullptr;
+    vector<MenuButton *> gameTypes = {
+        new MenuButton("3x3", 0, 0, 3, 64, 16),
+        new MenuButton("4x4", 0, 0, 4, 64, 16),
+        new MenuButton("5x5", 0, 0, 5, 64, 16)};
 
-    void init() {
+    void init()
+    {
         initSDL(window, renderer, "Hello", WIDTH, HEIGHT);
         board = new Board(size, WIDTH, 0, HEIGHT - WIDTH);
         font = loadTexture("assets/OpenSans-Regular_0.png", renderer);
         board->init(renderer, font);
 
-        //colors
+        // colors
         gameTypes[0]->setColor(231, 76, 60);
         gameTypes[1]->setColor(230, 126, 34);
         gameTypes[2]->setColor(241, 196, 15);
     }
 
-    void clearScreen() {
+    void clearScreen()
+    {
         SDL_SetRenderDrawColor(renderer,
-            BACKGROUND.r,
-            BACKGROUND.g,
-            BACKGROUND.b,
-            BACKGROUND.a);
+                               BACKGROUND.r,
+                               BACKGROUND.g,
+                               BACKGROUND.b,
+                               BACKGROUND.a);
         SDL_RenderClear(renderer);
     }
 
-    void restartGame() {
+    void restartGame()
+    {
         board = new Board(size, WIDTH, 0, HEIGHT - WIDTH);
         board->init(renderer, font);
+        
     }
 
-    void listen() {
-        while(SDL_PollEvent(&event)) {
+    void listen()
+    {
+        while (SDL_PollEvent(&event))
+        {
             if (event.type == SDL_QUIT)
             {
                 isRun = false;
             }
-            if(state == GameState::END) {
+            if (state == GameState::END)
+            {
                 if (newGameBtn->listen(&event))
                 {
                     state = GameState::MENU;
-                    // restartGame();
+                    board = nullptr;
                     return;
                 }
-            } else if(state == GameState::RUN ) {
+            }
+            else if (state == GameState::RUN)
+            {
                 board->listen(&event);
-            } else if(state == GameState::MENU) {
-                for(MenuButton *option : gameTypes) {
+            }
+            else if (state == GameState::MENU)
+            {
+                for (MenuButton *option : gameTypes)
+                {
                     int size = option->listen(&event);
-                    if(size != 0) {
+                    if (size != 0)
+                    {
                         this->size = size;
                         state = GameState::RUN;
                         restartGame();
@@ -114,92 +130,107 @@ class Game {
         }
     }
 
-    void render() {
+    void render()
+    {
         clearScreen();
-        if(state == GameState::RUN) {
+        if (state == GameState::RUN)
+        {
             isGameOver = false;
             renderGame();
-            
-        } else if( state == GameState::MENU) {
+        }
+        else if (state == GameState::MENU)
+        {
             isGameOver = false;
             renderMenu();
-        } else if( state == GameState::END){
+        }
+        else if (state == GameState::END)
+        {
             renderEnd();
         }
-        SDL_RenderPresent(renderer);
         frame++;
+        SDL_RenderPresent(renderer);
     }
 
-    void renderMenu() {
+    void renderMenu()
+    {
         int initPos = -100;
-        for(MenuButton *option: gameTypes) {
+        for (MenuButton *option : gameTypes)
+        {
             option->setPos(
                 (WIDTH - option->bounds.w) / 2,
-                (HEIGHT - option->bounds.h) / 2 + initPos
-            );
+                (HEIGHT - option->bounds.h) / 2 + initPos);
             // option->
             option->render(renderer, font);
             initPos += 100;
         }
     }
 
-    void renderGame() {
+    void renderGame()
+    {
         board->render(renderer);
         renderScore();
         renderFPS();
     }
 
-    void renderEnd() {
+    void renderEnd()
+    {
         message = new BitmapText("Game Over!!");
         scoreTxt = new BitmapText("Your score: " + to_string(score));
 
-        newGameBtn = new Button("New Game",0,0, 16);
+        newGameBtn = new Button("New Game", 0, 0, 16);
         // cout << newGameBtn->bounds.w << " ,"<< newGameBtn->bounds.w << endl;
         newGameBtn->setColor(9, 132, 227);
 
         message->render(renderer, font,
-            (WIDTH - message->block.w) / 2,
-            (HEIGHT - message->block.h) / 2 - 100);
+                        (WIDTH - message->block.w) / 2,
+                        (HEIGHT - message->block.h) / 2 - 100);
         newGameBtn->setPos(
             (WIDTH - newGameBtn->bounds.w) / 2,
-            (HEIGHT - newGameBtn->bounds.h) / 2 
-        );
+            (HEIGHT - newGameBtn->bounds.h) / 2);
         newGameBtn->render(renderer, font);
-        scoreTxt->render(renderer, font, 
-            (WIDTH - scoreTxt->block.w) / 2,
-            (HEIGHT - scoreTxt->block.h) / 2 + 240
-        );
+        scoreTxt->render(renderer, font,
+                         (WIDTH - scoreTxt->block.w) / 2,
+                         (HEIGHT - scoreTxt->block.h) / 2 + 240);
         // cout << newGameBtn->bounds.w << " ,"<< newGameBtn->bounds.w << endl;
     }
 
-    void renderScore() {
+    void renderScore()
+    {
         score = board->getScore();
         scoreTxt = new BitmapText("Score: " + to_string(score));
-        scoreTxt->render(renderer, font, 16,16);
+        scoreTxt->render(renderer, font, 16, 16);
     }
 
-    void renderFPS() {
+    void renderFPS()
+    {
         // if 1 seconds has passed, we update lastick
-        if (lastTicks < SDL_GetTicks() - 1000) {
+        if (lastTicks < SDL_GetTicks() - 1000)
+        {
             lastTicks = SDL_GetTicks();
             // update ui
             fps = new BitmapText("FPS: " + to_string(frame));
             // reset frame
             frame = 0;
         }
-        fps->render(renderer, font, WIDTH - fps->block.w - 16 ,16);
+        fps->render(renderer, font, WIDTH - fps->block.w - 16, 16);
         // cout << fps->block.x << "," << fps->block.y << "," << fps->block.w << "," << fps->block.h << endl;
     }
-    void handleGameOver() {
+    void handleGameOver()
+    {
+
+        if (board == nullptr)
+            return;
+
         if (board->isGameEnded())
         {
+            isGameOver = true;
             state = GameState::END;
         }
     }
     // void testRenderText() {
-        
+
     //     long time = SDL_GetTicks();
-        
+
     //     BitmapText *text = new BitmapText("Time passed: " + to_string(time / 1000) + " s.");
     //     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
     //     BitmapText *fps = new BitmapText("FPS: "+ to_string((int)(frame * 1000.0 / time)), 32);
