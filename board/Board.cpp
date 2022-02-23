@@ -1,102 +1,114 @@
-#include<iostream>
-#include<vector>
-#include<functional>
+#include <iostream>
+#include <vector>
+#include <functional>
 
 typedef void (*callback_function)(string);
 
-#include"BoardData.h"
-#include"BoardUI.h"
+#include "BoardData.h"
+#include "BoardUI.h"
 
-class Board {
-    
+class Board
+{
+
     BoardUI *ui;
     BoardData *data;
     SDL_Renderer *renderer;
 
-    public:
-    enum DIRECTION {
+public:
+    enum DIRECTION
+    {
         UP,
         RIGHT,
         DOWN,
         LEFT
     };
-    Board(int size, int width, int x, int y) {
-        ui = new BoardUI(this->renderer ,size, width);
+    Board(int size, int width, int x, int y)
+    {
+        ui = new BoardUI(this->renderer, size, width);
         ui->setPos(x, y);
         data = new BoardData(size);
     }
 
-    void listen(SDL_Event *event) {
-       if((*event).type == SDL_KEYDOWN) {
-           switch ((*event).key.keysym.sym)
-                {
-                    case SDLK_LEFT:
-                        this->move(Board::DIRECTION::LEFT);
-                        break;
-                    case SDLK_RIGHT:
-                         this->move(Board::DIRECTION::RIGHT);
-                        break;
-                    case SDLK_UP:
-                         this->move(Board::DIRECTION::UP);
-                        break;
-                    case SDLK_DOWN:
-                         this->move(Board::DIRECTION::DOWN);
-                        break;
-                default:
-                    break;
-                }
-       }
+    void listen(SDL_Event *event)
+    {
+        if ((*event).type == SDL_KEYDOWN)
+        {
+            switch ((*event).key.keysym.sym)
+            {
+            case SDLK_LEFT:
+                this->move(Board::DIRECTION::LEFT);
+                break;
+            case SDLK_RIGHT:
+                this->move(Board::DIRECTION::RIGHT);
+                break;
+            case SDLK_UP:
+                this->move(Board::DIRECTION::UP);
+                break;
+            case SDLK_DOWN:
+                this->move(Board::DIRECTION::DOWN);
+                break;
+            default:
+                break;
+            }
+        }
     }
-    void init(SDL_Renderer *renderer, SDL_Texture *font) {
+    void init(SDL_Renderer *renderer, SDL_Texture *font)
+    {
         this->renderer = renderer;
         this->ui->font = font;
     }
 
-    bool move(DIRECTION direction) {
+    bool move(DIRECTION direction)
+    {
         bool success = true;
         switch (direction)
         {
-            case UP:
-                success = data->moveUp();
-                data->addRandom();
-                break;
-            case DOWN:
-                success = data->moveDown();
-                data->addRandom();
-                break;
-            case LEFT:
-                success = data->moveLeft();
-                data->addRandom();
-                break;
-            case RIGHT:
-                success = data->moveRight();
-                data->addRandom();
-                break;        
-            default:
-                break;
+        case UP:
+            success = data->moveUp();
+            data->addRandom();
+            break;
+        case DOWN:
+            success = data->moveDown();
+            data->addRandom();
+            break;
+        case LEFT:
+            success = data->moveLeft();
+            data->addRandom();
+            break;
+        case RIGHT:
+            success = data->moveRight();
+            data->addRandom();
+            break;
+        default:
+            break;
         }
-        
+
         return success;
     }
 
-    void render(SDL_Renderer *renderer) {
+    void render(SDL_Renderer *renderer)
+    {
         ui->updateBoardUI(data->getData());
         ui->render(renderer);
     }
 
-    bool isGameEnded() {
+    bool isGameEnded()
+    {
         return data->isGameEnded();
     }
 
-    void reset(int size) {
+    void reset(int size)
+    {
         data = new BoardData(size);
     }
 
-    size_t getScore() {
+    size_t getScore()
+    {
         return data->getScore();
     }
 
-    ~Board() {
+    ~Board()
+    {
         ui = NULL;
         data = NULL;
     }

@@ -29,7 +29,7 @@ class Game
 public:
     bool isRun = true;
     bool isGameOver = false;
-    GameState state = MENU;
+    GameState state = END;
     long frame = 0;
     int size = 3;
     size_t score = 0;
@@ -46,7 +46,7 @@ public:
     // Game screen
     BitmapText *scoreTxt = nullptr;
     BitmapText *fps = nullptr;
-    Button *btn = nullptr;
+    Button *undoBtn = nullptr;
 
     Board *board;
 
@@ -54,6 +54,7 @@ public:
     BitmapText *finalScoreTxt = nullptr;
     BitmapText *message = nullptr;
     Button *newGameBtn = nullptr;
+    Button *quitBtn = nullptr;
 
     // Menu screen
     BitmapText *welcome = nullptr;
@@ -64,7 +65,7 @@ public:
 
     void init()
     {
-        initSDL(window, renderer, "Hello", WIDTH, HEIGHT);
+        initSDL(window, renderer, "2048 Game", WIDTH, HEIGHT);
         board = new Board(size, WIDTH, 0, HEIGHT - WIDTH);
         font = loadTexture("assets/OpenSans-Regular_0.png", renderer);
         board->init(renderer, font);
@@ -89,7 +90,7 @@ public:
     {
         board = new Board(size, WIDTH, 0, HEIGHT - WIDTH);
         board->init(renderer, font);
-        
+
     }
 
     void listen()
@@ -106,6 +107,9 @@ public:
                 {
                     state = GameState::MENU;
                     board = nullptr;
+                    return;
+                } else if(quitBtn->listen(&event)) {
+                    isRun = false;
                     return;
                 }
             }
@@ -153,6 +157,13 @@ public:
 
     void renderMenu()
     {
+        welcome = new BitmapText("Select board size:");
+
+        welcome->render(renderer, font, 
+            (WIDTH - welcome->block.w) / 2,
+            64
+        );
+
         int initPos = -100;
         for (MenuButton *option : gameTypes)
         {
@@ -177,7 +188,8 @@ public:
         message = new BitmapText("Game Over!!");
         scoreTxt = new BitmapText("Your score: " + to_string(score));
 
-        newGameBtn = new Button("New Game", 0, 0, 16);
+        newGameBtn = new Button("New Game", 0, 0, 12);
+        quitBtn = new Button("Quit", 0,0, 62, 12);
         // cout << newGameBtn->bounds.w << " ,"<< newGameBtn->bounds.w << endl;
         newGameBtn->setColor(9, 132, 227);
 
@@ -188,6 +200,13 @@ public:
             (WIDTH - newGameBtn->bounds.w) / 2,
             (HEIGHT - newGameBtn->bounds.h) / 2);
         newGameBtn->render(renderer, font);
+
+        quitBtn->setColor(231, 76, 70);
+        quitBtn->setPos(
+            (WIDTH - quitBtn->bounds.w) / 2,
+            (HEIGHT - quitBtn->bounds.h) / 2 + 64);
+
+        quitBtn->render(renderer, font);
         scoreTxt->render(renderer, font,
                          (WIDTH - scoreTxt->block.w) / 2,
                          (HEIGHT - scoreTxt->block.h) / 2 + 240);
