@@ -7,6 +7,7 @@ using namespace std;
 #include"utils/SDL_Utils.h"
 #include"utils/font.h"
 #include"utils/Button.h"
+#include"utils/MenuButton.h"
 #include"board/Board.cpp"
 
 enum GameState {
@@ -15,11 +16,17 @@ enum GameState {
     END
 };
 
+enum GameType {
+    EASY = 4,
+    MEDIUM = 5,
+    HARD = 6
+};
+
 class Game {
     public:
     bool isRun = true;
     bool isGameOver = false;
-    GameState state = END;
+    GameState state = MENU;
     long frame = 60;
     int size = 3;
     size_t score = 0;
@@ -45,11 +52,23 @@ class Game {
     BitmapText *message = nullptr;
     Button *newGameBtn = nullptr;
 
+    // Menu screen
+    vector<MenuButton*> gameTypes = {
+        new MenuButton("3x3", 0,0, 3 ,64, 16),
+        new MenuButton("4x4", 0,0, 4 ,64, 16),
+        new MenuButton("5x5", 0,0, 5 ,64, 16)
+    };
+
     void init() {
         initSDL(window, renderer, "Hello", WIDTH, HEIGHT);
         board = new Board(size, WIDTH, 0, HEIGHT - WIDTH);
         font = loadTexture("assets/OpenSans-Regular_0.png", renderer);
         board->init(renderer, font);
+
+        //colors
+        gameTypes[0]->setColor(231, 76, 60);
+        gameTypes[1]->setColor(230, 126, 34);
+        gameTypes[2]->setColor(241, 196, 15);
     }
 
     void clearScreen() {
@@ -62,7 +81,8 @@ class Game {
     }
 
     void restartGame() {
-        board->reset(size);
+        board = new Board(size, WIDTH, 0, HEIGHT - WIDTH);
+        board->init(renderer, font);
     }
 
     void listen() {
@@ -71,13 +91,24 @@ class Game {
             {
                 isRun = false;
             }
-            board->listen(&event);
             if(state == GameState::END) {
                 if (newGameBtn->listen(&event))
                 {
-                    state = GameState::RUN;
-                    restartGame();
+                    state = GameState::MENU;
+                    // restartGame();
                     return;
+                }
+            } else if(state == GameState::RUN ) {
+                board->listen(&event);
+            } else if(state == GameState::MENU) {
+                for(MenuButton *option : gameTypes) {
+                    int size = option->listen(&event);
+                    if(size != 0) {
+                        this->size = size;
+                        state = GameState::RUN;
+                        restartGame();
+                        return;
+                    }
                 }
             }
         }
@@ -90,6 +121,7 @@ class Game {
             renderGame();
             
         } else if( state == GameState::MENU) {
+            isGameOver = false;
             renderMenu();
         } else if( state == GameState::END){
             renderEnd();
@@ -99,7 +131,16 @@ class Game {
     }
 
     void renderMenu() {
-
+        int initPos = -100;
+        for(MenuButton *option: gameTypes) {
+            option->setPos(
+                (WIDTH - option->bounds.w) / 2,
+                (HEIGHT - option->bounds.h) / 2 + initPos
+            );
+            // option->
+            option->render(renderer, font);
+            initPos += 100;
+        }
     }
 
     void renderGame() {

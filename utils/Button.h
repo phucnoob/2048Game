@@ -1,23 +1,35 @@
 #include<string>
 #include"font.h"
-
+#pragma once
 class Button {
     BitmapText *ui;
-    int padding;
+    int padx, pady;
     SDL_Color bg;
 
     public:
         SDL_Rect bounds;
         Button(string text,int x, int y, int padding = 0) {
             ui = new BitmapText(text);
-            this->padding = padding;
+            this->padx = padding;
+            this->pady = padding;
             bounds = {
                 x,
                 y,
-                ui->block.w + this->padding * 2,
-                ui->block.h + this->padding * 2
+                ui->block.w + this->padx * 2,
+                ui->block.h + this->pady * 2
             };
-            this->padding = padding;
+        }
+
+        Button(string text,int x, int y, int padX,int padY) {
+            ui = new BitmapText(text);
+            this->padx = padX;
+            this->pady = padY;
+            bounds = {
+                x,
+                y,
+                ui->block.w + padX * 2,
+                ui->block.h + padY * 2
+            };
         }
 
         void setColor(Uint8 r, Uint8 g, Uint8 b) {
@@ -33,22 +45,22 @@ class Button {
             bounds = {
                 bounds.x,
                 bounds.y,
-                ui->block.w + this->padding * 2,
-                ui->block.h + this->padding * 2
+                ui->block.w + this->padx * 2,
+                ui->block.h + this->pady * 2
             };
         }
 
 
         void render(SDL_Renderer *renderer,SDL_Texture *font) {
             
-            SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, 255);
+            SDL_SetRenderDrawColor(renderer, bg.r, bg.g, bg.b, 128);
             SDL_RenderFillRect(renderer, &bounds);
             // y offsetfix
-            ui->render(renderer, font, bounds.x + padding - 4, bounds.y + padding - 4);
+            ui->render(renderer, font, bounds.x + padx - 4, bounds.y + pady - 4);
         }
 
         bool listen(SDL_Event *event) {
-            if ((*event).button.button == SDL_BUTTON_LEFT) {
+            if ((*event).type ==  SDL_MOUSEBUTTONUP) {
                 int x = (*event).button.x;
                 int y = (*event).button.y;
 
