@@ -6,29 +6,44 @@ using namespace std;
 
 #include"utils/SDL_Utils.h"
 #include"utils/font.h"
+#include"utils/Button.h"
 #include"board/Board.cpp"
+
+enum GameState {
+    MENU,
+    RUN,
+    END
+};
 
 class Game {
     public:
     bool isRun = true;
+    bool isGameOver = false;
+    GameState state = END;
     long frame = 60;
-    int size = 6;
+    int size = 3;
     size_t score = 0;
     const int WIDTH = 540;
     const int HEIGHT = 720;
 
     Uint32 lastTicks = 0;
 
-    SDL_Color BACKGROUND = {149, 165, 166, 255};
+    SDL_Color BACKGROUND = {45, 52, 54, 255};
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
     SDL_Texture *font = nullptr;
-    BitmapText *scoreTxt = nullptr;
-    BitmapText *message = nullptr;
-    BitmapText *fps = nullptr;
     SDL_Event event;
+    // Game screen
+    BitmapText *scoreTxt = nullptr;
+    BitmapText *fps = nullptr;
+    Button *btn = nullptr;
 
     Board *board;
+
+    // GameOver screen
+    BitmapText *finalScoreTxt = nullptr;
+    BitmapText *message = nullptr;
+    Button *newGameBtn = nullptr;
 
     void init() {
         initSDL(window, renderer, "Hello", WIDTH, HEIGHT);
@@ -46,29 +61,23 @@ class Game {
         SDL_RenderClear(renderer);
     }
 
+    void restartGame() {
+        board->reset(size);
+    }
+
     void listen() {
         while(SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT)
             {
                 isRun = false;
-            } else if (event.type == SDL_KEYDOWN)
-            {
-                switch (event.key.keysym.sym)
+            }
+            board->listen(&event);
+            if(state == GameState::END) {
+                if (newGameBtn->listen(&event))
                 {
-                    case SDLK_LEFT:
-                        board->move(Board::DIRECTION::LEFT);
-                        break;
-                    case SDLK_RIGHT:
-                         board->move(Board::DIRECTION::RIGHT);
-                        break;
-                    case SDLK_UP:
-                         board->move(Board::DIRECTION::UP);
-                        break;
-                    case SDLK_DOWN:
-                         board->move(Board::DIRECTION::DOWN);
-                        break;
-                default:
-                    break;
+                    state = GameState::RUN;
+                    restartGame();
+                    return;
                 }
             }
         }
@@ -76,12 +85,50 @@ class Game {
 
     void render() {
         clearScreen();
-        board->render(renderer);
-        // testRenderText();
-        renderScore();
-        renderFPS();
+        if(state == GameState::RUN) {
+            isGameOver = false;
+            renderGame();
+            
+        } else if( state == GameState::MENU) {
+            renderMenu();
+        } else if( state == GameState::END){
+            renderEnd();
+        }
         SDL_RenderPresent(renderer);
         frame++;
+    }
+
+    void renderMenu() {
+
+    }
+
+    void renderGame() {
+        board->render(renderer);
+        renderScore();
+        renderFPS();
+    }
+
+    void renderEnd() {
+        message = new BitmapText("Game Over!!");
+        scoreTxt = new BitmapText("Your score: " + to_string(score));
+
+        newGameBtn = new Button("New Game",0,0, 16);
+        // cout << newGameBtn->bounds.w << " ,"<< newGameBtn->bounds.w << endl;
+        newGameBtn->setColor(9, 132, 227);
+
+        message->render(renderer, font,
+            (WIDTH - message->block.w) / 2,
+            (HEIGHT - message->block.h) / 2 - 100);
+        newGameBtn->setPos(
+            (WIDTH - newGameBtn->bounds.w) / 2,
+            (HEIGHT - newGameBtn->bounds.h) / 2 
+        );
+        newGameBtn->render(renderer, font);
+        scoreTxt->render(renderer, font, 
+            (WIDTH - scoreTxt->block.w) / 2,
+            (HEIGHT - scoreTxt->block.h) / 2 + 240
+        );
+        // cout << newGameBtn->bounds.w << " ,"<< newGameBtn->bounds.w << endl;
     }
 
     void renderScore() {
@@ -105,8 +152,7 @@ class Game {
     void handleGameOver() {
         if (board->isGameEnded())
         {
-            cout << score;
-            isRun = false;
+            state = GameState::END;
         }
     }
     // void testRenderText() {

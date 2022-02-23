@@ -26,6 +26,27 @@ class Board {
         data = new BoardData(size);
     }
 
+    void listen(SDL_Event *event) {
+       if((*event).type == SDL_KEYDOWN) {
+           switch ((*event).key.keysym.sym)
+                {
+                    case SDLK_LEFT:
+                        this->move(Board::DIRECTION::LEFT);
+                        break;
+                    case SDLK_RIGHT:
+                         this->move(Board::DIRECTION::RIGHT);
+                        break;
+                    case SDLK_UP:
+                         this->move(Board::DIRECTION::UP);
+                        break;
+                    case SDLK_DOWN:
+                         this->move(Board::DIRECTION::DOWN);
+                        break;
+                default:
+                    break;
+                }
+       }
+    }
     void init(SDL_Renderer *renderer, SDL_Texture *font) {
         this->renderer = renderer;
         this->ui->font = font;
@@ -65,6 +86,10 @@ class Board {
 
     bool isGameEnded() {
         return data->isGameEnded();
+    }
+
+    void reset(int size) {
+        data = new BoardData(size);
     }
 
     size_t getScore() {
