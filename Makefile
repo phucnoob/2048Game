@@ -1,19 +1,31 @@
-#OBJS specifies which files to compile as part of the project
-OBJS = main.cpp
+# The compiler PATH
+COMPILER = g++
 
-#CC specifies which compiler we're using
-CC = g++
 
-#COMPILER_FLAGS specifies the additional compilation options we're using
-# -w suppresses all warnings
-COMPILER_FLAGS = -w
+LIB_FLAGS = -LSDL/lib -lSDL2main -lSDL2 -lSDL2_image
+INCLUDE_FLAGS = -ISDL/include
 
-#LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSDL2 -lSDL2_image
+# If your compiler is a bit older you may need to change -std=c++11 to -std=c++0x
+COMPILE_FLAGS = -Wall -c -std=c++11 $(INCLUDE_FLAGS)
+BUILD_FLAGS = -mwindows -mconsole $(LIB_FLAGS)
 
-#OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = main.out
+# Your main source code
+SRC = main.cpp
+# Your executable directory
+OUT = out
 
-#This is the target that compiles our executable
-all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+# The obj name
+TARGET = main
+
+all: build run
+
+run:
+	$(OUT)/$(TARGET).exe
+
+build: compile 
+	$(COMPILER) $(OUT)/$(TARGET).o $(BUILD_FLAGS) -o $(OUT)/$(TARGET).exe
+compile:
+	$(COMPILER) $(COMPILE_FLAGS) $(SRC) -o $(OUT)/$(TARGET).o
+
+clean:
+	rm $(OUT)/*.o $(OUT)/*.exe

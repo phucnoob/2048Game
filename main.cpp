@@ -2,6 +2,7 @@
 #include<vector>
 using namespace std;
 
+#define SDL_MAIN_HANDLED
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 
@@ -21,6 +22,7 @@ int main() {
         game->listen();
         game->render();
         game->handleGameOver();
+        printFPS();
     }
 
     return 0;

@@ -3,13 +3,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/include/SDL2"
+                "${workspaceFolder}/Library/**",
+                "${workspaceFolder}/**"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "gnu17",
-            "intelliSenseMode": "linux-gcc-x64"
+            "compilerPath": "C:/Dev/mingw64/bin/g++",
+            "cStandard": "gnu11",
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

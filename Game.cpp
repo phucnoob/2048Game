@@ -30,7 +30,7 @@ public:
     bool isRun = true;
     bool isGameOver = false;
     GameState state = MENU;
-    long frame = 0;
+    long frame = 60;
     int size = 3;
     size_t score = 0;
     const int WIDTH = 540;
@@ -39,6 +39,7 @@ public:
     Uint32 lastTicks = 0;
 
     SDL_Color BACKGROUND = {45, 52, 54, 255};
+
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
     SDL_Texture *font = nullptr;
@@ -151,7 +152,6 @@ public:
         {
             renderEnd();
         }
-        frame++;
         SDL_RenderPresent(renderer);
     }
 
@@ -222,7 +222,7 @@ public:
 
     void renderFPS()
     {
-        // if 1 seconds has passed, we update lastick
+        // if 1 seconds = 1000 miliseconds has passed, we update lastick
         if (lastTicks < SDL_GetTicks() - 1000)
         {
             lastTicks = SDL_GetTicks();
@@ -232,7 +232,7 @@ public:
             frame = 0;
         }
         fps->render(renderer, font, WIDTH - fps->block.w - 16, 16);
-        // cout << fps->block.x << "," << fps->block.y << "," << fps->block.w << "," << fps->block.h << endl;
+        frame++;
     }
     void handleGameOver()
     {

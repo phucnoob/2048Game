@@ -103,7 +103,7 @@ public:
         // 0 4 0 0
         bool success = false;
         int index = 0, stop = 0;
-        for (size_t i = 0; i < arr.size(); i++)
+        for (int i = 0; i < arr.size(); i++)
         {
             if (arr[i] != 0)
             {
@@ -192,9 +192,9 @@ public:
         int SIZE = data.size();
         int emptyCroods[SIZE * SIZE][2];
         int len = 0;
-        for (size_t i = 0; i < SIZE; i++)
+        for (int i = 0; i < SIZE; i++)
         {
-            for (size_t j = 0; j < SIZE; j++)
+            for (int j = 0; j < SIZE; j++)
             {
                 if (data[i][j] == 0)
                 {
@@ -221,9 +221,9 @@ public:
     {
         int count = 0;
         int SIZE = data.size();
-        for (size_t i = 0; i < SIZE; i++)
+        for (int i = 0; i < SIZE; i++)
         {
-            for (size_t j = 0; j < SIZE; j++)
+            for (int j = 0; j < SIZE; j++)
             {
                 if (data[i][j] == 0)
                 {
@@ -238,9 +238,9 @@ public:
     bool canMoveLeft()
     {
         int SIZE = data.size();
-        for (size_t i = 0; i < SIZE; i++)
+        for (int i = 0; i < SIZE; i++)
         {
-            for (size_t j = 1; j < SIZE; j++)
+            for (int j = 1; j < SIZE; j++)
             {
                 if (data[i][j] == data[i][j - 1])
                 {

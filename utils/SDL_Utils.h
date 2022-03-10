@@ -7,6 +7,7 @@
 
 using namespace std;
 
+size_t lastTicks = 0, frame = 0;
 
 SDL_Texture* loadTexture( string path, SDL_Renderer* renderer )
 {
@@ -43,7 +44,7 @@ void initSDL(SDL_Window* &window, SDL_Renderer* &renderer,
         logSDLError(std::cout, "SDL_Init", true);
 
     window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED,
-       SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+       SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN);
 
     if (window == nullptr) logSDLError(std::cout, "CreateWindow", true);
 
@@ -61,6 +62,21 @@ void quitSDL(SDL_Window* window, SDL_Renderer* renderer)
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void printFPS()
+{
+    // if 1 seconds = 1000 miliseconds has passed, we update lastick
+    if (lastTicks < SDL_GetTicks() - 1000)
+    {
+        lastTicks = SDL_GetTicks();
+        // update ui
+        cout << frame << endl;
+        // reset frame
+        frame = 0;
+    }
+    frame++;
+    // cout << fps->block.x << "," << fps->block.y << "," << fps->block.w << "," << fps->block.h << endl;
 }
 
 

@@ -105,7 +105,7 @@ class Tile
         }
 };
 
-SDL_Color color0 = {238, 228, 218, 0.35 * 255};
+SDL_Color color0 = {238, 228, 218, 90};
 SDL_Color color1 = {238, 228, 218, 255};
 SDL_Color color2 = {238, 225, 201, 255};
 SDL_Color color3 = {243, 178, 122, 255};

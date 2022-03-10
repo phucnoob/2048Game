@@ -8,14 +8,14 @@ using namespace std;
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_image.h>
 
-typedef struct glyph
+typedef struct
 {
     char a;
     int x, y;
     int width, height;
     int xoffset, yoffset;
     int xadvance;
-};
+} glyph;
 
 glyph glyphs[] = {
     {32, 0, 0, 0, 0, 0, 0, 8},
