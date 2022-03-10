@@ -52,6 +52,8 @@ public:
     Board *board;
 
     // GameOver screen
+
+    int waitTime = 0;
     BitmapText *finalScoreTxt = nullptr;
     BitmapText *message = nullptr;
     Button *newGameBtn = nullptr;
@@ -253,8 +255,11 @@ public:
 
         if (board->isGameEnded())
         {
+            waitTime++;
+            if(waitTime < 4 * 60) return;
             isGameOver = true;
             state = GameState::END;
+            waitTime = 0;
         }
     }
 
