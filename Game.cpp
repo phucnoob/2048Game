@@ -75,6 +75,11 @@ public:
         gameTypes[0]->setColor(231, 76, 60);
         gameTypes[1]->setColor(230, 126, 34);
         gameTypes[2]->setColor(241, 196, 15);
+
+        // buttons
+        undoBtn = new Button("Undo", 0, 0, 12, 6);
+        undoBtn->setPos(WIDTH - undoBtn->bounds.w - 16, 80);
+        undoBtn->setColor(127, 87,142);
     }
 
     void clearScreen()
@@ -91,7 +96,6 @@ public:
     {
         board = new Board(size, WIDTH, 0, HEIGHT - WIDTH);
         board->init(renderer, font);
-
     }
 
     void listen()
@@ -117,6 +121,9 @@ public:
             else if (state == GameState::RUN)
             {
                 board->listen(&event);
+                bool undo = undoBtn->listen(&event);
+
+                handleUndo(undo);
             }
             else if (state == GameState::MENU)
             {
@@ -181,6 +188,7 @@ public:
         board->render(renderer);
         renderScore();
         renderFPS();
+        renderUndo();
     }
 
     void renderEnd()
@@ -220,6 +228,10 @@ public:
         scoreTxt->render(renderer, font, 16, 16);
     }
 
+    void renderUndo() {
+        undoBtn->render(renderer, font);
+    }
+
     void renderFPS()
     {
         // if 1 seconds = 1000 miliseconds has passed, we update lastick
@@ -236,7 +248,6 @@ public:
     }
     void handleGameOver()
     {
-
         if (board == nullptr)
             return;
 
@@ -246,14 +257,10 @@ public:
             state = GameState::END;
         }
     }
-    // void testRenderText() {
 
-    //     long time = SDL_GetTicks();
+    void handleUndo(bool isClick) {
+        if(!isClick) return;
 
-    //     BitmapText *text = new BitmapText("Time passed: " + to_string(time / 1000) + " s.");
-    //     SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-    //     BitmapText *fps = new BitmapText("FPS: "+ to_string((int)(frame * 1000.0 / time)), 32);
-    //     fps->render(renderer, font, 0, 50);
-    //     text->render(renderer, font, 0,0);
-    // }
+        board->undo();
+    }
 };

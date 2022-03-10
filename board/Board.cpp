@@ -12,6 +12,8 @@ class Board
 
     BoardUI *ui;
     BoardData *data;
+    stack<vector<vector<int>>> lasts;
+    stack<size_t> lastScore;
     SDL_Renderer *renderer;
 
 public:
@@ -56,10 +58,29 @@ public:
     {
         this->renderer = renderer;
         this->ui->font = font;
+        data->addRandom();
+        data->addRandom();
+    }
+
+    void saveLastState() {
+        lasts.push(data->getData());
+        lastScore.push(getScore());
+    }
+
+    void undo() {
+
+        if(lasts.empty()) return;
+        data->setData(lasts.top());
+        data->setScore(lastScore.top());
+        lastScore.pop();
+        lasts.pop();
     }
 
     bool move(DIRECTION direction)
     {
+        // Save last board
+        saveLastState();
+
         bool success = true;
         switch (direction)
         {
@@ -82,6 +103,7 @@ public:
         default:
             break;
         }
+        
 
         return success;
     }
@@ -105,6 +127,10 @@ public:
     size_t getScore()
     {
         return data->getScore();
+    }
+
+    void setScore(size_t score) {
+        data->setScore(score);
     }
 
     ~Board()

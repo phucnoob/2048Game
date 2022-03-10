@@ -1,4 +1,5 @@
 #include <vector>
+#include <stack>
 #include <cstdlib>
 #include <ctime>
 #include<iostream>
@@ -20,8 +21,16 @@ public:
         return data;
     }
 
+    void setData(vector<vector<int>> data) {
+        this->data = data;
+    }
+
     size_t getScore() {
         return score;
+    }
+
+    void setScore(size_t score) {
+        this->score = score;
     }
     // random in [a,b)
     int randRange(int a, int b)
@@ -210,7 +219,7 @@ public:
             return;
         }
         int pos = randRange(0, len);
-        data[emptyCroods[pos][0]][emptyCroods[pos][1]] = randRange(1, 3) * 2;
+        data[emptyCroods[pos][0]][emptyCroods[pos][1]] = 2;
     }
 
     // add rand

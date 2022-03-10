@@ -78,7 +78,6 @@ class Tile
         void render(SDL_Renderer *renderer, SDL_Texture *font) {
 
             resovleColor();
-            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
             SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
             SDL_RenderFillRect(renderer, &block);            
             if(value == 0) {
@@ -101,7 +100,6 @@ class Tile
 
             //reset color
             SDL_SetTextureColorMod(font, 255, 255, 255);
-            SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
         }
 };
 
